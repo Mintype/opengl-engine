@@ -21,7 +21,7 @@ public class Scene {
     public void render() {
         // Render all meshes
         for (Mesh mesh : meshes) {
-            mesh.render();
+            mesh.render(MatrixUtils.createIdentityMatrix());
         }
     }
 
