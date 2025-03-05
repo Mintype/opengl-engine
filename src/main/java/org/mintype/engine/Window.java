@@ -87,12 +87,4 @@ public class Window {
     public void setScene(Scene scene) {
         this.scene = scene;
     }
-
-    public static void main(String[] args) {
-        Scene scene = new Scene();
-        Window window = new Window(800, 600, "LWJGL Window with Scene", scene);
-        window.init();
-        window.loop();
-        window.cleanup();
-    }
 }
