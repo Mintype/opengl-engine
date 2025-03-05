@@ -26,6 +26,43 @@ public class Main {
         // Define indices for drawing the triangle
         int[] indices = new int[]{0, 1, 2};
 
+//        // Define vertices for a cube with position and color
+//        Vertex[] vertices = new Vertex[]{
+//                // Front face
+//                new Vertex(new float[]{-0.5f, -0.5f,  0.5f}, new float[]{1.0f, 0.0f, 0.0f}),  // Red
+//                new Vertex(new float[]{ 0.5f, -0.5f,  0.5f}, new float[]{0.0f, 1.0f, 0.0f}),  // Green
+//                new Vertex(new float[]{ 0.5f,  0.5f,  0.5f}, new float[]{0.0f, 0.0f, 1.0f}),  // Blue
+//                new Vertex(new float[]{-0.5f,  0.5f,  0.5f}, new float[]{1.0f, 1.0f, 0.0f}),  // Yellow
+//
+//                // Back face
+//                new Vertex(new float[]{-0.5f, -0.5f, -0.5f}, new float[]{1.0f, 0.0f, 1.0f}),  // Magenta
+//                new Vertex(new float[]{ 0.5f, -0.5f, -0.5f}, new float[]{0.0f, 1.0f, 1.0f}),  // Cyan
+//                new Vertex(new float[]{ 0.5f,  0.5f, -0.5f}, new float[]{1.0f, 0.5f, 0.0f}),  // Orange
+//                new Vertex(new float[]{-0.5f,  0.5f, -0.5f}, new float[]{0.5f, 0.0f, 0.5f})   // Purple
+//        };
+//
+//        // Define indices for drawing the cube
+//        int[] indices = new int[]{
+//                // Front face
+//                0, 1, 2,
+//                2, 3, 0,
+//                // Top face
+//                3, 2, 6,
+//                6, 7, 3,
+//                // Back face
+//                7, 6, 5,
+//                5, 4, 7,
+//                // Bottom face
+//                4, 5, 1,
+//                1, 0, 4,
+//                // Left face
+//                4, 0, 3,
+//                3, 7, 4,
+//                // Right face
+//                1, 5, 6,
+//                6, 2, 1
+//        };
+
         // Create the mesh and pass the shader program to it
         Mesh mesh = new Mesh(vertices, indices, shaderProgram);
 

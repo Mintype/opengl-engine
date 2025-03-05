@@ -43,4 +43,17 @@ public class MatrixUtils {
                 0.0f, 0.0f, -(2.0f * farPlane * nearPlane) / (farPlane - nearPlane), 0.0f
         };
     }
+
+    public static float[] createRotationYMatrix(float angle) {
+        float cos = (float) Math.cos(angle);
+        float sin = (float) Math.sin(angle);
+
+        return new float[]{
+                cos, 0.0f, sin, 0.0f,
+                0.0f, 1.0f, 0.0f, 0.0f,
+                -sin, 0.0f, cos, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f
+        };
+    }
+
 }
