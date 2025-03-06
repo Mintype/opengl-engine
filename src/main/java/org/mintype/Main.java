@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Scene scene = new Scene(800, 600);
 
-        Window window = new Window(800, 600, "LWJGL Window with Scene", scene);
+        Engine window = new Engine(800, 600, "LWJGL Engine with Scene", scene);
         window.init();  // Initializes OpenGL
 
         // Load the shaders
