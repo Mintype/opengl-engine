@@ -37,9 +37,15 @@ public class Entity {
     }
 
     // Rotate on Y-axis over time or user input
-    public void rotate(float deltaY) {
+    public void rotate(float deltaX, float deltaY, float deltaZ) {
+        this.rotation.x += deltaX; // Increase rotation around the X-axis
         this.rotation.y += deltaY; // Increase rotation around the Y-axis
-        if (this.rotation.y > 360) this.rotation.y -= 360; // Keep it within 0-360 degrees
+        this.rotation.z += deltaZ; // Increase rotation around the Z-axis
+
+        // Keep it within 0-360 degrees
+        if (this.rotation.x > 360) this.rotation.x -= 360;
+        if (this.rotation.y > 360) this.rotation.y -= 360;
+        if (this.rotation.z > 360) this.rotation.z -= 360;
     }
 
     public Mesh getMesh() {
