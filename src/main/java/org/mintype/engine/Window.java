@@ -51,6 +51,8 @@ public class Window {
 
         // Initialize OpenGL bindings
         GL.createCapabilities();
+
+        glEnable(GL_DEPTH_TEST);
     }
 
     public void loop() {
