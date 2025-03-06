@@ -1,59 +1,83 @@
 package org.mintype.engine;
 
+import org.joml.Matrix4f;
+import org.lwjgl.system.MemoryStack;
+
+import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import org.lwjgl.system.MemoryStack;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
+import static org.lwjgl.opengl.GL20.*;
 
 public class ShaderProgram {
     private final int programId;
 
-    public ShaderProgram(String vertexPath, String fragmentPath) throws Exception {
-        String vertexSource = new String(Files.readAllBytes(Paths.get(vertexPath)));
-        String fragmentSource = new String(Files.readAllBytes(Paths.get(fragmentPath)));
-
-        int vertexShader = compileShader(GL20.GL_VERTEX_SHADER, vertexSource);
-        int fragmentShader = compileShader(GL20.GL_FRAGMENT_SHADER, fragmentSource);
-
-        programId = GL20.glCreateProgram();
-        GL20.glAttachShader(programId, vertexShader);
-        GL20.glAttachShader(programId, fragmentShader);
-        GL20.glLinkProgram(programId);
-
-        if (GL20.glGetProgrami(programId, GL20.GL_LINK_STATUS) == 0) {
-            throw new RuntimeException("Failed to link shader program: " + GL20.glGetProgramInfoLog(programId));
+    public ShaderProgram(String vertexShaderPath, String fragmentShaderPath) {
+        programId = glCreateProgram();
+        if (programId == 0) {
+            throw new RuntimeException("Failed to create OpenGL shader program.");
         }
 
-        GL20.glValidateProgram(programId);
+        // Load, compile, and attach shaders
+        int vertexShaderId = createShader(vertexShaderPath, GL_VERTEX_SHADER);
+        int fragmentShaderId = createShader(fragmentShaderPath, GL_FRAGMENT_SHADER);
+
+        glAttachShader(programId, vertexShaderId);
+        glAttachShader(programId, fragmentShaderId);
+        glLinkProgram(programId);
+
+        // Check for linking errors
+        if (glGetProgrami(programId, GL_LINK_STATUS) == 0) {
+            throw new RuntimeException("Error linking shader program: " + glGetProgramInfoLog(programId));
+        }
+
+        // Shaders are linked, can be deleted
+        glDetachShader(programId, vertexShaderId);
+        glDetachShader(programId, fragmentShaderId);
+        glDeleteShader(vertexShaderId);
+        glDeleteShader(fragmentShaderId);
     }
 
-    private int compileShader(int type, String source) {
-        int shaderId = GL20.glCreateShader(type);
-        GL20.glShaderSource(shaderId, source);
-        GL20.glCompileShader(shaderId);
+    private int createShader(String filePath, int shaderType) {
+        String shaderSource = loadShaderSource(filePath);
+        int shaderId = glCreateShader(shaderType);
 
-        if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == 0) {
-            throw new RuntimeException("Failed to compile shader: " + GL20.glGetShaderInfoLog(shaderId));
+        glShaderSource(shaderId, shaderSource);
+        glCompileShader(shaderId);
+
+        // Check for compilation errors
+        if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == 0) {
+            throw new RuntimeException("Error compiling shader at " + filePath + ":\n" + glGetShaderInfoLog(shaderId));
         }
-
         return shaderId;
     }
 
-    public void use() {
-        GL20.glUseProgram(programId);
+    private String loadShaderSource(String filePath) {
+        try {
+            return new String(Files.readAllBytes(Paths.get(filePath)));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load shader file: " + filePath, e);
+        }
     }
 
-    public void setUniform(String name, float[] matrix) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            int location = GL20.glGetUniformLocation(programId, name);
-            if (location != -1) {
-                GL20.glUniformMatrix4fv(location, false, matrix);
+    public void use() {
+        glUseProgram(programId);
+    }
+
+    public void setUniform(String name, Matrix4f matrix) {
+        int location = glGetUniformLocation(programId, name);
+        if (location != -1) {
+            try (MemoryStack stack = MemoryStack.stackPush()) {
+                FloatBuffer buffer = stack.mallocFloat(16);
+                matrix.get(buffer);
+                glUniformMatrix4fv(location, false, buffer);
             }
+        } else {
+            System.err.println("Warning: Uniform '" + name + "' not found in shader!");
         }
     }
 
     public void cleanup() {
-        GL20.glDeleteProgram(programId);
+        glDeleteProgram(programId);
     }
 }

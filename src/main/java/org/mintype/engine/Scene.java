@@ -4,30 +4,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Scene {
-    private List<Mesh> meshes;
+    private List<Entity> entities;
+    private Camera camera;
 
-    public Scene() {
-        meshes = new ArrayList<>();
+    public Scene(int windowWidth, int windowHeight) {
+        entities = new ArrayList<>();
+        camera = new Camera(70, (float) windowWidth / windowHeight, 0.1f, 100.0f);
     }
 
-    public void addMesh(Mesh mesh) {
-        meshes.add(mesh);
+    public void addEntity(Entity entity) {
+        entities.add(entity);
     }
 
     public void update() {
-        // Update logic (e.g., game objects, transformations, etc.)
+        camera.updateViewMatrix(); // Update camera before rendering
+        // Future logic (e.g., animation, physics)
+
+        for (Entity entity : entities) {
+            entity.rotate(1);
+        }
     }
 
     public void render() {
-        // Render all meshes
-        for (Mesh mesh : meshes) {
-            mesh.render(MatrixUtils.createIdentityMatrix());
+        for (Entity entity : entities) {
+            entity.render(camera.getViewMatrix(), camera.getProjectionMatrix());
         }
     }
 
     public void cleanup() {
-        for (Mesh mesh : meshes) {
-            mesh.cleanup();
+        for (Entity entity : entities) {
+            entity.getMesh().cleanup();
         }
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 }

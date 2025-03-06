@@ -1,14 +1,10 @@
 package org.mintype;
 
-import org.mintype.engine.Mesh;
-import org.mintype.engine.Scene;
-import org.mintype.engine.Vertex;
-import org.mintype.engine.Window;
-import org.mintype.engine.ShaderProgram;
+import org.mintype.engine.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        Scene scene = new Scene();
+        Scene scene = new Scene(800, 600);
 
         Window window = new Window(800, 600, "LWJGL Window with Scene", scene);
         window.init();  // Initializes OpenGL
@@ -66,8 +62,10 @@ public class Main {
         // Create the mesh and pass the shader program to it
         Mesh mesh = new Mesh(vertices, indices, shaderProgram);
 
+        Entity entity = new Entity(mesh);
+
         // Add the mesh to the scene
-        scene.addMesh(mesh);
+        scene.addEntity(entity);
 
         window.loop();
         window.cleanup();

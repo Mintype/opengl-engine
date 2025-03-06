@@ -1,5 +1,6 @@
 package org.mintype.engine;
 
+import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryStack;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -52,13 +53,11 @@ public class Mesh {
         glBindVertexArray(0); // Unbind VAO
     }
 
-    public void render(float[] modelViewProjectionMatrix) {
-        shaderProgram.use();  // Use the shader program
-
-        // Set the transformation matrix as a uniform
-        shaderProgram.setUniform("modelViewProjection", modelViewProjectionMatrix);
-
-        // Bind the VAO and draw the elements
+    public void render(Matrix4f modelMatrix, Matrix4f viewMatrix, Matrix4f projectionMatrix) {
+        shaderProgram.use();
+        shaderProgram.setUniform("modelMatrix", modelMatrix);
+        shaderProgram.setUniform("viewMatrix", viewMatrix);
+        shaderProgram.setUniform("projectionMatrix", projectionMatrix);
         glBindVertexArray(vaoId);
         glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
