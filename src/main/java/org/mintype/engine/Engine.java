@@ -7,13 +7,13 @@ import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
-public class Window {
+public class Engine {
     private long window;
     private int width, height;
     private String title;
     private Scene scene;
 
-    public Window(int width, int height, String title, Scene scene) {
+    public Engine(int width, int height, String title, Scene scene) {
         this.width = width;
         this.height = height;
         this.title = title;
@@ -52,7 +52,19 @@ public class Window {
         // Initialize OpenGL bindings
         GL.createCapabilities();
 
+        // Enable Depth Testing
         glEnable(GL_DEPTH_TEST);
+
+        GLFW.glfwSetFramebufferSizeCallback(window, (win, newWidth, newHeight) -> {
+            // Update your camera aspect ratio or projection matrix
+            this.width = newWidth;
+            this.height = newHeight;
+
+            // Update the viewport to match the new window size
+            GL11.glViewport(0, 0, newWidth, newHeight);
+        });
+
+
     }
 
     public void loop() {

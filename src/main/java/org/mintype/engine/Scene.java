@@ -9,7 +9,7 @@ public class Scene {
 
     public Scene(int windowWidth, int windowHeight) {
         entities = new ArrayList<>();
-        camera = new Camera(70, (float) windowWidth / windowHeight, 0.1f, 100.0f);
+        camera = new Camera(70, windowWidth, windowHeight, 0.1f, 100.0f);
     }
 
     public void addEntity(Entity entity) {
