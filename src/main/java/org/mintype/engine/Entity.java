@@ -8,18 +8,33 @@ public class Entity {
     private Vector3f position;
     private Vector3f rotation;
     private Vector3f scale;
-    private String name;
 
     public Entity(Mesh mesh) {
-        this(mesh, "unnamed entity");
-    }
-
-    public Entity(Mesh mesh, String name) {
         this.mesh = mesh;
         this.position = new Vector3f(0, 0, 0);
         this.rotation = new Vector3f(0, 0, 0);
         this.scale = new Vector3f(1, 1, 1);
-        this.name = name;
+    }
+
+    public Entity(Mesh mesh, Vector3f position) {
+        this.mesh = mesh;
+        this.position = position;
+        this.rotation = new Vector3f(0, 0, 0);
+        this.scale = new Vector3f(1, 1, 1);
+    }
+
+    public Entity(Mesh mesh, Vector3f position, Vector3f rotation) {
+        this.mesh = mesh;
+        this.position = position;
+        this.rotation = rotation;
+        this.scale = new Vector3f(1, 1, 1);
+    }
+
+    public Entity(Mesh mesh, Vector3f position, Vector3f rotation, Vector3f scale) {
+        this.mesh = mesh;
+        this.position = position;
+        this.rotation = rotation;
+        this.scale = scale;
     }
 
     public Matrix4f getModelMatrix() {
@@ -61,4 +76,13 @@ public class Entity {
 
     public Vector3f getScale() { return scale; }
     public void setScale(Vector3f scale) { this.scale.set(scale); }
+
+    public Vector3f getMinBounds() {
+        return new Vector3f(position.x - scale.x / 2, position.y - scale.y / 2, position.z - scale.z / 2);
+    }
+
+    public Vector3f getMaxBounds() {
+        return new Vector3f(position.x + scale.x / 2, position.y + scale.y / 2, position.z + scale.z / 2);
+    }
+
 }

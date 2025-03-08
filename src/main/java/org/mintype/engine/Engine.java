@@ -12,6 +12,9 @@ public class Engine {
     private int width, height;
     private String title;
     private Scene currentScene;
+    private double lastTime;
+    private int fps;
+    private double deltaTime;
 
     public Engine(int width, int height, String title, Scene scene) {
         this.width = width;
@@ -56,12 +59,9 @@ public class Engine {
         glEnable(GL_DEPTH_TEST);
 
         GLFW.glfwSetFramebufferSizeCallback(window, (win, newWidth, newHeight) -> {
-            // Update your camera aspect ratio or projection matrix
             this.width = newWidth;
             this.height = newHeight;
-
-            // Update the viewport to match the new window size
-            GL11.glViewport(0, 0, newWidth, newHeight);
+            glViewport(0, 0, newWidth, newHeight);
         });
 
         GLFW.glfwSetKeyCallback(window, (windowHandle, key, scancode, action, mods) -> {
@@ -72,32 +72,42 @@ public class Engine {
 
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+        lastTime = glfwGetTime();
+        fps = 0;
     }
 
     public void loop() {
-        // Main game loop
+        double frameCounter = 0;
+        int frames = 0;
+
         while (!glfwWindowShouldClose(window)) {
-            // Poll events
+            double currentTime = glfwGetTime();
+            deltaTime = currentTime - lastTime;
+            lastTime = currentTime;
+            frameCounter += deltaTime;
+            frames++;
+
+            if (frameCounter >= 1.0) {
+                fps = frames;
+                glfwSetWindowTitle(window, title + " | FPS: " + fps);
+                frames = 0;
+                frameCounter = 0;
+            }
+
             glfwPollEvents();
             currentScene.handleMouseMovement(window);
-
-            // Update the scene
+//            currentScene.update(deltaTime);
             currentScene.update();
 
-            // Clear the screen
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            // Render the scene
             currentScene.render();
 
-            // Swap buffers
             glfwSwapBuffers(window);
         }
     }
 
     public void cleanup() {
         currentScene.cleanup();
-        // Free the window callbacks and destroy the window
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
     }
@@ -108,5 +118,9 @@ public class Engine {
 
     public void setCurrentScene(Scene currentScene) {
         this.currentScene = currentScene;
+    }
+
+    public double getDeltaTime() {
+        return deltaTime;
     }
 }
