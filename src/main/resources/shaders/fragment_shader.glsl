@@ -1,8 +1,12 @@
 #version 330 core
 
-in vec3 fragColor; // Color from the vertex shader
-out vec4 outColor; // Final color of the fragment
+in vec3 vertexColor;
+in vec2 fragTexCoords;
+
+out vec4 fragColor;
+
+uniform sampler2D textureSampler;
 
 void main() {
-    outColor = vec4(fragColor, 1.0f); // Set the output color
+    fragColor = texture(textureSampler, fragTexCoords) * vec4(vertexColor, 1.0);
 }

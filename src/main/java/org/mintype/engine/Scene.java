@@ -21,7 +21,7 @@ public class Scene {
         // Future logic (e.g., animation, physics)
 
         for (Entity entity : entities) {
-            entity.rotate(0, 1, 0);
+            entity.rotate(1, 1, 0);
         }
     }
 
