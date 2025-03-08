@@ -23,6 +23,21 @@ public class Camera {
         updateProjectionMatrix(fov, near, far);
     }
 
+    // Method to update camera based on mouse movement
+    public void processMouseMovement(double deltaX, double deltaY) {
+        float sensitivity = 0.1f; // Adjust sensitivity as needed
+
+        // Update rotation values
+        rotation.y += deltaY * sensitivity; // Yaw (left/right)
+        rotation.x -= deltaX * sensitivity; // Pitch (up/down)
+
+        // Clamp pitch to prevent flipping
+        if (rotation.x > 89.0f) rotation.x = 89.0f;
+        if (rotation.x < -89.0f) rotation.x = -89.0f;
+
+        updateViewMatrix(); // Apply changes to view matrix
+    }
+
     private void updateProjectionMatrix(float fov, float near, float far) {
         projectionMatrix = new Matrix4f().perspective((float) Math.toRadians(fov), aspectRatio, near, far);
     }
@@ -47,9 +62,17 @@ public class Camera {
         updateViewMatrix();
     }
 
+    public Vector3f getPosition() {
+        return position;
+    }
+
     public void setRotation(Vector3f rotation) {
         this.rotation.set(rotation);
         updateViewMatrix();
+    }
+
+    public Vector3f getRotation() {
+        return rotation;
     }
 
     public void setAspectRatio(int windowWidth, int windowHeight) {

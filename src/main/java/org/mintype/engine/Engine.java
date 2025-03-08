@@ -11,13 +11,13 @@ public class Engine {
     private long window;
     private int width, height;
     private String title;
-    private Scene scene;
+    private Scene currentScene;
 
     public Engine(int width, int height, String title, Scene scene) {
         this.width = width;
         this.height = height;
         this.title = title;
-        this.scene = scene;
+        this.currentScene = scene;
     }
 
     public void init() {
@@ -64,6 +64,13 @@ public class Engine {
             GL11.glViewport(0, 0, newWidth, newHeight);
         });
 
+        GLFW.glfwSetKeyCallback(window, (windowHandle, key, scancode, action, mods) -> {
+            if (currentScene != null) {
+                currentScene.handleKeyEvent(key, action);
+            }
+        });
+
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     }
 
@@ -72,15 +79,16 @@ public class Engine {
         while (!glfwWindowShouldClose(window)) {
             // Poll events
             glfwPollEvents();
+            currentScene.handleMouseMovement(window);
 
             // Update the scene
-            scene.update();
+            currentScene.update();
 
             // Clear the screen
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // Render the scene
-            scene.render();
+            currentScene.render();
 
             // Swap buffers
             glfwSwapBuffers(window);
@@ -88,7 +96,7 @@ public class Engine {
     }
 
     public void cleanup() {
-        scene.cleanup();
+        currentScene.cleanup();
         // Free the window callbacks and destroy the window
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
@@ -98,7 +106,7 @@ public class Engine {
         return window;
     }
 
-    public void setScene(Scene scene) {
-        this.scene = scene;
+    public void setCurrentScene(Scene currentScene) {
+        this.currentScene = currentScene;
     }
 }
