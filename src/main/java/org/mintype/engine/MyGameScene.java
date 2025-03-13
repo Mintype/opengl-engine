@@ -29,7 +29,8 @@ public class MyGameScene extends Scene {
 
     private void cameraMovement() {
         if (isKeyPressed(GLFW.GLFW_KEY_W)) {
-            camera.setPosition(new Vector3f(camera.getPosition().x, camera.getPosition().y, camera.getPosition().z - speed));
+            camera.moveForward(speed);
+            //camera.setPosition(new Vector3f(camera.getPosition().x, camera.getPosition().y, camera.getPosition().z - speed));
         }
         if (isKeyPressed(GLFW.GLFW_KEY_S)) {
             camera.setPosition(new Vector3f(camera.getPosition().x, camera.getPosition().y, camera.getPosition().z + speed));
@@ -142,9 +143,15 @@ public class MyGameScene extends Scene {
     }
 
     public static void main(String[] args) {
-        Scene scene = new MyGameScene(800, 600);
+        Scene scene = new MyGameScene(1280, 720);
 
-        Engine window = new Engine(800, 600, "LWJGL Engine with Scene", scene);
+        scene.getCamera().setPosition(new Vector3f(
+                scene.getCamera().getPosition().x,
+                scene.getCamera().getPosition().y + 5.0f,
+                scene.getCamera().getPosition().z
+        ));
+
+        Engine window = new Engine(1280, 720, "LWJGL Engine with Scene", scene);
         window.init();  // Initializes OpenGL
 
         // Load the shaders
@@ -155,14 +162,15 @@ public class MyGameScene extends Scene {
 
         Mesh cubeMesh = createCubeMesh(shaderProgram, texture); // Create one cube mesh
 
-        int cubeSize = 20;
+        int cubeSize = 200;
+
+        int[][] heightmap = HeightmapGenerator.generateHeightmap(cubeSize, cubeSize, 0.002f, 4, 0.5f);
+
         for (int x = 0; x < cubeSize; x++) {
-            for (int y = 0; y < cubeSize; y++) {
                 for (int z = 0; z < cubeSize; z++) {
-                    Entity entity = new Entity(cubeMesh, new Vector3f((float)x, (float)y, (float)z));
+                    Entity entity = new Entity(cubeMesh, new Vector3f((float)x - 100, (float)heightmap[x][z], (float)z - 100));
                     scene.addEntity(entity);
                 }
-            }
         }
 
 

@@ -31,11 +31,17 @@ public class Camera {
         rotation.y += deltaY * sensitivity; // Yaw (left/right)
         rotation.x -= deltaX * sensitivity; // Pitch (up/down)
 
+        // Normalize yaw (rotation.y) to be within the 0 to 360 degrees range
+        if (rotation.y > 360.0f) rotation.y -= 360.0f;
+        if (rotation.y < 0.0f) rotation.y += 360.0f;
+
         // Clamp pitch to prevent flipping
         if (rotation.x > 89.0f) rotation.x = 89.0f;
         if (rotation.x < -89.0f) rotation.x = -89.0f;
 
         updateViewMatrix(); // Apply changes to view matrix
+
+        printRotation();
     }
 
     private void updateProjectionMatrix(float fov, float near, float far) {
@@ -78,5 +84,57 @@ public class Camera {
     public void setAspectRatio(int windowWidth, int windowHeight) {
         this.aspectRatio = (float) windowWidth / windowHeight;
         updateProjectionMatrix(fov, near, far);
+    }
+
+    // Method to move the camera forward in the direction it's looking
+    public void moveForward(float distance) {
+//        Vector3f forward = new Vector3f();
+//        forward.x = (float) Math.sin(Math.toRadians(rotation.y)) * (float) Math.cos(Math.toRadians(rotation.x));
+//        forward.y = (float) Math.sin(Math.toRadians(rotation.x));
+//        forward.z = (float) Math.cos(Math.toRadians(rotation.y)) * (float) Math.cos(Math.toRadians(rotation.x));
+
+        // Calculate the forward direction vector based on the current yaw, pitch, and roll
+        Vector3f forward = new Vector3f(0, 0, -1);  // Default forward direction (looking along negative Z-axis)
+
+        // Apply rotation (yaw, pitch, roll) to the forward direction vector
+        forward = applyRotation(forward, rotation.y, rotation.x, rotation.z);
+
+        // Normalize the forward vector to ensure consistent movement
+        forward.normalize().mul(distance);
+
+        // Move the camera position by the forward vector
+        position.add(forward);
+
+        // Invert the forward vector to move the camera in the direction it is facing
+        forward.negate();
+
+        forward.normalize().mul(distance);
+        position.add(forward);
+        updateViewMatrix();
+    }
+
+    // Method to apply yaw, pitch, and roll rotations to a vector
+    public Vector3f applyRotation(Vector3f vector, float yaw, float pitch, float roll) {
+        // Apply yaw (around the Y-axis)
+        float x = vector.x * (float) Math.cos(yaw) - vector.z * (float) Math.sin(yaw);
+        float z = vector.z * (float) Math.cos(yaw) + vector.x * (float) Math.sin(yaw);
+
+        // Apply pitch (around the X-axis)
+        float y = vector.y * (float) Math.cos(pitch) - z * (float) Math.sin(pitch);
+        z = z * (float) Math.cos(pitch) + vector.y * (float) Math.sin(pitch);
+
+        // Apply roll (around the Z-axis)
+        x = x * (float) Math.cos(roll) - y * (float) Math.sin(roll);
+        y = y * (float) Math.cos(roll) + x * (float) Math.sin(roll);
+
+        return new Vector3f(x, y, z);
+    }
+
+
+    public void printRotation() {
+        // Format the rotation values to 2 decimal places for better readability
+        System.out.println("Rotation: [Pitch: " + String.format("%.2f", rotation.x)
+                + ", Yaw: " + String.format("%.2f", rotation.y)
+                + ", Roll: " + String.format("%.2f", rotation.z) + "]");
     }
 }
